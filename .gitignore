@@ -1,0 +1,49 @@
+# ----- Python -----
+__pycache__/
+*.py[cod]
+*.pyo
+
+# ----- Virtual Environments -----
+.venv/
+env/
+venv/
+
+# ----- Jupyter Notebook -----
+.ipynb_checkpoints/
+jupyter_cache/
+.jupyter/
+
+# ----- Data Science Large Files -----
+*.csv
+*.tsv
+*.json
+*.xml
+*.zip
+*.gz
+*.h5
+*.pickle
+*.pkl
+*.feather
+*.parquet
+
+# Ignore the entire data folder
+data/
+DP_Jupyter_Project/data/
+DP_2025/DP_Jupyter_Project/data/
+
+# ----- Apple Health Exports (very large & private!) -----
+*apple_health_export*
+*Apple_Health*
+*health_export*
+
+# ----- Logs & Temp -----
+*.log
+*.tmp
+*.temp
+
+# ----- macOS -----
+.DS_Store
+
+# ----- Others -----
+*.sqlite
+*.db
