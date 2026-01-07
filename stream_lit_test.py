@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent
-DATA_PATH = BASE_DIR.parent / "data" / "processed" / "data_final.csv"
+# BASE_DIR = Path(__file__).resolve().parent
+DATA_PATH = "data/processed/data_final.csv"
 
 @st.cache_data
 def load_data():

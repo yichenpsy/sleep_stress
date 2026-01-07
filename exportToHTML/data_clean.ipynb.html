@@ -21,20 +21,40 @@ data_clean.ipynb</font>
 <pre><span class="s0">#%% 
 </span><span class="s1">import </span><span class="s0">pandas </span><span class="s1">as </span><span class="s0">pd</span>
 <span class="s1">import </span><span class="s0">matplotlib</span><span class="s2">.</span><span class="s0">pyplot </span><span class="s1">as </span><span class="s0">plt</span>
+<span class="s1">import </span><span class="s0">seaborn </span><span class="s1">as </span><span class="s0">sns</span>
 
-<span class="s0">pd</span><span class="s2">.</span><span class="s0">set_option</span><span class="s2">(</span><span class="s3">'display.max_rows'</span><span class="s2">, </span><span class="s1">None</span><span class="s2">)</span><hr class="ls0"><span class="s0">#%% 
-df_raw </span><span class="s2">= </span><span class="s0">pd</span><span class="s2">.</span><span class="s0">read_csv</span><span class="s2">(</span><span class="s3">&quot;data/apple_health_export_2025-11-22.csv&quot;</span><span class="s2">)</span><hr class="ls0"><span class="s0">#%% 
-</span><span class="s4"># df_raw</span><hr class="ls0"><span class="s0">#%% 
-df_raw</span><span class="s2">[</span><span class="s3">&quot;type&quot;</span><span class="s2">].</span><span class="s0">unique</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% 
-df_raw</span><span class="s2">[</span><span class="s3">&quot;startDate&quot;</span><span class="s2">] = </span><span class="s0">pd</span><span class="s2">.</span><span class="s0">to_datetime</span><span class="s2">(</span><span class="s0">df_raw</span><span class="s2">[</span><span class="s3">&quot;startDate&quot;</span><span class="s2">])</span>
-<span class="s0">df_raw</span><span class="s2">[</span><span class="s3">&quot;endDate&quot;</span><span class="s2">] = </span><span class="s0">pd</span><span class="s2">.</span><span class="s0">to_datetime</span><span class="s2">(</span><span class="s0">df_raw</span><span class="s2">[</span><span class="s3">&quot;endDate&quot;</span><span class="s2">])</span><hr class="ls0"><span class="s0">#%% 
+<span class="s0">pd</span><span class="s2">.</span><span class="s0">set_option</span><span class="s2">(</span><span class="s3">'display.max_rows'</span><span class="s2">, </span><span class="s1">None</span><span class="s2">)</span><hr class="ls0"><span class="s0">#%% md 
+# load_data.py <hr class="ls0">#%% 
+df_raw </span><span class="s2">= </span><span class="s0">pd</span><span class="s2">.</span><span class="s0">read_csv</span><span class="s2">(</span><span class="s3">&quot;../data/raw/apple_health_export_2025-11-22.csv&quot;</span><span class="s2">)</span><hr class="ls0"><span class="s0">#%% 
+df_raw</span><span class="s2">.</span><span class="s0">head</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% md 
+# preprocessing_raw_data.py 
+fix dtypes 
+handle missing values 
+remove invalid rows 
+timestamp → date 
+rename columns <hr class="ls0">#%% 
+</span><span class="s4"># check unique columns</span>
+<span class="s0">df_raw</span><span class="s2">[</span><span class="s3">&quot;type&quot;</span><span class="s2">].</span><span class="s0">unique</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% md 
+## fix_dtpes_datetime() <hr class="ls0">#%% 
+</span><span class="s4"># fix_dtpes_datetime()</span>
+<span class="s0">df_raw</span><span class="s2">[</span><span class="s3">&quot;startDate&quot;</span><span class="s2">] = </span><span class="s0">pd</span><span class="s2">.</span><span class="s0">to_datetime</span><span class="s2">(</span><span class="s0">df_raw</span><span class="s2">[</span><span class="s3">&quot;startDate&quot;</span><span class="s2">])</span>
+<span class="s0">df_raw</span><span class="s2">[</span><span class="s3">&quot;endDate&quot;</span><span class="s2">] = </span><span class="s0">pd</span><span class="s2">.</span><span class="s0">to_datetime</span><span class="s2">(</span><span class="s0">df_raw</span><span class="s2">[</span><span class="s3">&quot;endDate&quot;</span><span class="s2">])</span><hr class="ls0"><span class="s0">#%% md 
+## select_datasource_watch() <hr class="ls0">#%% 
 df_raw</span><span class="s2">[</span><span class="s3">&quot;sourceName&quot;</span><span class="s2">].</span><span class="s0">unique</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% 
-df_raw </span><span class="s2">= </span><span class="s0">df_raw</span><span class="s2">[</span><span class="s0">df_raw</span><span class="s2">[</span><span class="s3">&quot;sourceName&quot;</span><span class="s2">].</span><span class="s0">str</span><span class="s2">.</span><span class="s0">contains</span><span class="s2">(</span><span class="s3">&quot;Watch&quot;</span><span class="s2">, </span><span class="s0">na</span><span class="s2">=</span><span class="s1">False</span><span class="s2">)]</span>
-<span class="s0">df_raw</span><hr class="ls0"><span class="s0">#%% md 
-## Sleep <hr class="ls0">#%% 
+</span><span class="s4"># select_datasource_watch()</span>
+<span class="s0">df_raw </span><span class="s2">= </span><span class="s0">df_raw</span><span class="s2">[</span><span class="s0">df_raw</span><span class="s2">[</span><span class="s3">&quot;sourceName&quot;</span><span class="s2">].</span><span class="s0">str</span><span class="s2">.</span><span class="s0">contains</span><span class="s2">(</span><span class="s3">&quot;Watch&quot;</span><span class="s2">, </span><span class="s0">na</span><span class="s2">=</span><span class="s1">False</span><span class="s2">)]</span>
+<span class="s0">df_raw</span><span class="s2">.</span><span class="s0">head</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% md 
+# preprocessing_sleep_data.py <hr class="ls0">#%% md 
+## process_sleep_data() <hr class="ls0">#%% 
 df_sleep </span><span class="s2">= </span><span class="s0">df_raw</span><span class="s2">[</span><span class="s0">df_raw</span><span class="s2">[</span><span class="s3">&quot;type&quot;</span><span class="s2">] == </span><span class="s3">&quot;SleepAnalysis&quot;</span><span class="s2">]</span>
-<span class="s4"># df_sleep = df_sleep[[&quot;value&quot;, &quot;startDate&quot;, &quot;endDate&quot;]]</span>
-<span class="s0">df_sleep</span><hr class="ls0"><span class="s0">#%% 
+<span class="s0">df_sleep</span><span class="s2">.</span><span class="s0">head</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% md 
+### select_sleep_data() <hr class="ls0">#%% 
+</span><span class="s4"># select_sleep_data()</span>
+<span class="s0">df_sleep </span><span class="s2">= </span><span class="s0">df_raw</span><span class="s2">[</span><span class="s0">df_raw</span><span class="s2">[</span><span class="s3">&quot;type&quot;</span><span class="s2">] == </span><span class="s3">&quot;SleepAnalysis&quot;</span><span class="s2">]</span>
+<span class="s0">df_sleep </span><span class="s2">= </span><span class="s0">df_sleep</span><span class="s2">[[</span><span class="s3">&quot;value&quot;</span><span class="s2">, </span><span class="s3">&quot;startDate&quot;</span><span class="s2">, </span><span class="s3">&quot;endDate&quot;</span><span class="s2">]]</span><hr class="ls0"><span class="s0">#%% 
+df_sleep</span><span class="s2">.</span><span class="s0">head</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% md 
+### get_sleep_day() 
+if sleep segment starts in the evening, count it for the next day <hr class="ls0">#%% 
 </span><span class="s1">def </span><span class="s0">get_sleep_day</span><span class="s2">(</span><span class="s0">start</span><span class="s2">):</span>
     <span class="s4"># if sleep segment starts in the evening, count it for the next day</span>
     <span class="s1">if </span><span class="s0">start</span><span class="s2">.</span><span class="s0">hour </span><span class="s2">&gt;= </span><span class="s5">18</span><span class="s2">:</span>
@@ -42,40 +62,107 @@ df_sleep </span><span class="s2">= </span><span class="s0">df_raw</span><span cl
     <span class="s1">else</span><span class="s2">:</span>
         <span class="s1">return </span><span class="s0">start</span><span class="s2">.</span><span class="s0">date</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% 
 df_sleep</span><span class="s2">[</span><span class="s3">&quot;sleep_day&quot;</span><span class="s2">] = </span><span class="s0">df_sleep</span><span class="s2">[</span><span class="s3">&quot;startDate&quot;</span><span class="s2">].</span><span class="s0">apply</span><span class="s2">(</span><span class="s0">get_sleep_day</span><span class="s2">)</span><hr class="ls0"><span class="s0">#%% 
-df_sleep</span><hr class="ls0"><span class="s0">#%% 
-</span><span class="s4"># compute duration in minutes</span>
+df_sleep</span><span class="s2">.</span><span class="s0">head</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% md 
+###  select_time_20to12_as_sleep() <hr class="ls0">#%% 
+sleep_not_night </span><span class="s2">= </span><span class="s0">df_sleep</span><span class="s2">[(</span><span class="s0">df_sleep</span><span class="s2">[</span><span class="s3">&quot;startDate&quot;</span><span class="s2">].</span><span class="s0">dt</span><span class="s2">.</span><span class="s0">hour </span><span class="s2">&lt; </span><span class="s5">20</span><span class="s2">) &amp; (</span><span class="s0">df_sleep</span><span class="s2">[</span><span class="s3">&quot;startDate&quot;</span><span class="s2">].</span><span class="s0">dt</span><span class="s2">.</span><span class="s0">hour </span><span class="s2">&gt; </span><span class="s5">12</span><span class="s2">)]</span>
+<span class="s0">print</span><span class="s2">(</span><span class="s0">sleep_not_night</span><span class="s2">)</span><hr class="ls0"><span class="s0">#%% 
+</span><span class="s4"># select_time_20to12_as_sleep()</span>
+<span class="s0">df_sleep </span><span class="s2">= </span><span class="s0">df_sleep</span><span class="s2">[(</span><span class="s0">df_sleep</span><span class="s2">[</span><span class="s3">&quot;startDate&quot;</span><span class="s2">].</span><span class="s0">dt</span><span class="s2">.</span><span class="s0">hour </span><span class="s2">&gt; </span><span class="s5">20</span><span class="s2">) | (</span><span class="s0">df_sleep</span><span class="s2">[</span><span class="s3">&quot;startDate&quot;</span><span class="s2">].</span><span class="s0">dt</span><span class="s2">.</span><span class="s0">hour </span><span class="s2">&lt; </span><span class="s5">12</span><span class="s2">) ]</span><hr class="ls0"><span class="s0">#%% md 
+### compute_sleep_duraiton_each_stage() <hr class="ls0">#%% 
+</span><span class="s4"># compute_sleep_duraiton_in_minu()</span>
 <span class="s0">df_sleep</span><span class="s2">[</span><span class="s3">&quot;duration&quot;</span><span class="s2">] = (</span><span class="s0">df_sleep</span><span class="s2">[</span><span class="s3">&quot;endDate&quot;</span><span class="s2">] - </span><span class="s0">df_sleep</span><span class="s2">[</span><span class="s3">&quot;startDate&quot;</span><span class="s2">])</span><span class="s4">#.dt.total_seconds()</span>
-<span class="s4">#df_sleep[&quot;duration_min&quot;] = df_sleep[&quot;duration_sec&quot;] / 60</span><hr class="ls0"><span class="s0">#%% 
-df_sleep</span><hr class="ls0"><span class="s0">#%% 
-sleep_grouped </span><span class="s2">= </span><span class="s0">df_sleep</span><span class="s2">.</span><span class="s0">groupby</span><span class="s2">([</span><span class="s3">&quot;sleep_day&quot;</span><span class="s2">, </span><span class="s3">&quot;value&quot;</span><span class="s2">])[</span><span class="s3">&quot;duration&quot;</span><span class="s2">].</span><span class="s0">sum</span><span class="s2">().</span><span class="s0">reset_index</span><span class="s2">()</span>
-<span class="s0">sleep_grouped</span><hr class="ls0"><span class="s0">#%% 
-sleep_agg </span><span class="s2">= </span><span class="s0">sleep_grouped</span><span class="s2">.</span><span class="s0">pivot</span><span class="s2">(</span>
+<span class="s0">df_sleep</span><span class="s2">[</span><span class="s3">&quot;duration_minute&quot;</span><span class="s2">] = </span><span class="s0">df_sleep</span><span class="s2">[</span><span class="s3">&quot;duration&quot;</span><span class="s2">].</span><span class="s0">dt</span><span class="s2">.</span><span class="s0">total_seconds</span><span class="s2">() / </span><span class="s5">60</span>
+<span class="s4"># df_sleep[&quot;duration_hour&quot;] = df_sleep[&quot;duration&quot;].dt.total_seconds() / 60 /60</span><hr class="ls0"><span class="s0">#%% 
+df_sleep</span><span class="s2">.</span><span class="s0">head</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% md 
+### aggregate_daily_sleep_by_stage(df_sleep) 
+to do: describe these two steps <hr class="ls0">#%% 
+</span><span class="s4"># aggregated_daily_sleep_by_stage()</span>
+<span class="s0">sleep_grouped </span><span class="s2">= </span><span class="s0">df_sleep</span><span class="s2">.</span><span class="s0">groupby</span><span class="s2">([</span><span class="s3">&quot;sleep_day&quot;</span><span class="s2">, </span><span class="s3">&quot;value&quot;</span><span class="s2">])[</span><span class="s3">&quot;duration_minute&quot;</span><span class="s2">].</span><span class="s0">sum</span><span class="s2">().</span><span class="s0">reset_index</span><span class="s2">()</span>
+<span class="s0">sleep_grouped</span><span class="s2">.</span><span class="s0">head</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% 
+</span><span class="s4"># aggregated_daily_sleep_by_stage()</span>
+<span class="s0">sleep_agg </span><span class="s2">= </span><span class="s0">sleep_grouped</span><span class="s2">.</span><span class="s0">pivot</span><span class="s2">(</span>
     <span class="s0">index</span><span class="s2">=</span><span class="s3">&quot;sleep_day&quot;</span><span class="s2">,</span>
     <span class="s0">columns</span><span class="s2">=</span><span class="s3">&quot;value&quot;</span><span class="s2">,</span>
-    <span class="s0">values</span><span class="s2">=</span><span class="s3">&quot;duration&quot;</span>
+    <span class="s0">values</span><span class="s2">=</span><span class="s3">&quot;duration_minute&quot;</span>
 <span class="s2">).</span><span class="s0">fillna</span><span class="s2">(</span><span class="s5">0</span><span class="s2">)</span>
-<span class="s0">sleep_agg</span><hr class="ls0"><span class="s0">#%% 
+<span class="s0">sleep_agg</span><hr class="ls0"><span class="s0">#%% md 
+### rename_sleep_data_column(sleep_agg) <hr class="ls0">#%% 
+sleep_agg</span><span class="s2">.</span><span class="s0">columns </span><span class="s2">= </span><span class="s0">sleep_agg</span><span class="s2">.</span><span class="s0">columns</span><span class="s2">.</span><span class="s0">str</span><span class="s2">.</span><span class="s0">replace</span><span class="s2">(</span><span class="s3">&quot;HKCategoryValueSleepAnalysis&quot;</span><span class="s2">, </span><span class="s3">&quot;&quot;</span><span class="s2">, </span><span class="s0">regex</span><span class="s2">=</span><span class="s1">False</span><span class="s2">)</span><hr class="ls0"><span class="s0">#%% 
 sleep_agg</span><span class="s2">.</span><span class="s0">columns</span><hr class="ls0"><span class="s0">#%% 
-sleep_agg</span><span class="s2">[</span><span class="s3">&quot;sleep_duration_sum&quot;</span><span class="s2">] = </span><span class="s0">sleep_agg</span><span class="s2">[</span><span class="s3">&quot;HKCategoryValueSleepAnalysisAsleepCore&quot;</span><span class="s2">] + </span><span class="s0">sleep_agg</span><span class="s2">[</span><span class="s3">&quot;HKCategoryValueSleepAnalysisAsleepDeep&quot;</span><span class="s2">] + </span><span class="s0">sleep_agg</span><span class="s2">[</span><span class="s3">&quot;HKCategoryValueSleepAnalysisAsleepREM&quot;</span><span class="s2">] + </span><span class="s0">sleep_agg</span><span class="s2">[</span><span class="s3">&quot;HKCategoryValueSleepAnalysisAwake&quot;</span><span class="s2">]</span>
-<span class="s0">sleep_agg</span><hr class="ls0"><span class="s0">#%% 
-sleep_agg</span><span class="s2">[</span><span class="s3">&quot;duration_min&quot;</span><span class="s2">] = </span><span class="s0">sleep_agg</span><span class="s2">[</span><span class="s3">&quot;sleep_duration_sum&quot;</span><span class="s2">] / </span><span class="s0">pd</span><span class="s2">.</span><span class="s0">Timedelta</span><span class="s2">(</span><span class="s0">minutes</span><span class="s2">=</span><span class="s5">1</span><span class="s2">)</span>
-<span class="s0">sleep_agg</span><hr class="ls0"><span class="s0">#%% 
-plt</span><span class="s2">.</span><span class="s0">hist</span><span class="s2">(</span><span class="s0">sleep_agg</span><span class="s2">[</span><span class="s3">&quot;duration_min&quot;</span><span class="s2">])</span><hr class="ls0"><span class="s0">#%% md 
-## HRV <hr class="ls0">#%% 
-df_hrv </span><span class="s2">= </span><span class="s0">df_raw</span><span class="s2">[</span><span class="s0">df_raw</span><span class="s2">[</span><span class="s3">&quot;type&quot;</span><span class="s2">] == </span><span class="s3">&quot;HeartRateVariabilitySDNN&quot;</span><span class="s2">]</span>
-<span class="s0">df_hrv</span><hr class="ls0"><span class="s0">#%% 
+sleep_agg </span><span class="s2">= </span><span class="s0">sleep_agg</span><span class="s2">.</span><span class="s0">rename</span><span class="s2">(</span><span class="s0">columns </span><span class="s2">={</span>
+    <span class="s3">'AsleepCore'</span><span class="s2">: </span><span class="s3">'sleepCore'</span><span class="s2">,</span>
+    <span class="s3">'AsleepDeep'</span><span class="s2">: </span><span class="s3">'sleepDeep'</span><span class="s2">,</span>
+    <span class="s3">'AsleepREM'</span><span class="s2">: </span><span class="s3">'sleepREM'</span><span class="s2">,</span>
+    <span class="s3">'AsleepUnspecified'</span><span class="s2">: </span><span class="s3">'sleepUnspecified'</span><span class="s2">,</span>
+    <span class="s3">'Awake'</span><span class="s2">: </span><span class="s3">'awake'</span><span class="s2">,</span>
+    <span class="s3">'InBed'</span><span class="s2">: </span><span class="s3">'inBed'</span>
+<span class="s2">})</span><hr class="ls0"><span class="s0">#%% md 
+### completeness_check() <hr class="ls0">#%% 
+ df_incomplete </span><span class="s2">= </span><span class="s0">sleep_agg</span><span class="s2">[(</span><span class="s0">sleep_agg</span><span class="s2">[</span><span class="s3">&quot;sleepCore&quot;</span><span class="s2">] == </span><span class="s5">0</span><span class="s2">) &amp;</span>
+                        <span class="s2">(</span><span class="s0">sleep_agg</span><span class="s2">[</span><span class="s3">&quot;sleepDeep&quot;</span><span class="s2">] == </span><span class="s5">0</span><span class="s2">) &amp;</span>
+                        <span class="s2">(</span><span class="s0">sleep_agg</span><span class="s2">[</span><span class="s3">&quot;sleepREM&quot;</span><span class="s2">] == </span><span class="s5">0</span><span class="s2">)]</span>
+ <span class="s0">df_incomplete</span><hr class="ls0"><span class="s0">#%% 
+df_sleep_cleaned1 </span><span class="s2">= </span><span class="s0">sleep_agg</span><span class="s2">[</span>
+    <span class="s2">(</span><span class="s0">sleep_agg</span><span class="s2">[</span><span class="s3">&quot;sleepCore&quot;</span><span class="s2">] != </span><span class="s5">0</span><span class="s2">) &amp;</span>
+    <span class="s2">(</span><span class="s0">sleep_agg</span><span class="s2">[</span><span class="s3">&quot;sleepDeep&quot;</span><span class="s2">] != </span><span class="s5">0</span><span class="s2">) &amp;</span>
+    <span class="s2">(</span><span class="s0">sleep_agg</span><span class="s2">[</span><span class="s3">&quot;sleepREM&quot;</span><span class="s2">] != </span><span class="s5">0</span><span class="s2">)</span>
+<span class="s2">]</span><hr class="ls0"><span class="s0">#%% md 
+### na, null checken <hr class="ls0">#%% 
+df_sleep_cleaned1</span><span class="s2">.</span><span class="s0">isnull</span><span class="s2">().</span><span class="s0">sum</span><span class="s2">()</span>
+<span class="s0">df_sleep_cleaned1</span><span class="s2">.</span><span class="s0">isna</span><span class="s2">().</span><span class="s0">sum</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% md 
+### Duplicates <hr class="ls0">#%% 
+df_sleep_cleaned1</span><span class="s2">.</span><span class="s0">duplicated</span><span class="s2">().</span><span class="s0">sum</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% 
+df_sleep_cleaned1</span><hr class="ls0"><span class="s0">#%% md 
+### calculate_sleep_index <hr class="ls0">#%% 
+df_sleep_cleaned1</span><span class="s2">[</span><span class="s3">&quot;sleep_sum&quot;</span><span class="s2">] = </span><span class="s0">df_sleep_cleaned1</span><span class="s2">[</span><span class="s3">&quot;sleepCore&quot;</span><span class="s2">] + </span><span class="s0">df_sleep_cleaned1</span><span class="s2">[</span><span class="s3">&quot;sleepDeep&quot;</span><span class="s2">] + </span><span class="s0">df_sleep_cleaned1</span><span class="s2">[</span><span class="s3">&quot;sleepREM&quot;</span><span class="s2">] + </span><span class="s0">df_sleep_cleaned1</span><span class="s2">[</span><span class="s3">'sleepUnspecified'</span><span class="s2">] + </span><span class="s0">df_sleep_cleaned1</span><span class="s2">[</span><span class="s3">&quot;awake&quot;</span><span class="s2">]</span>
+
+<span class="s0">df_sleep_cleaned1</span><span class="s2">[</span><span class="s3">&quot;sleep_efficiency&quot;</span><span class="s2">] = (</span><span class="s0">df_sleep_cleaned1</span><span class="s2">[</span><span class="s3">&quot;sleep_sum&quot;</span><span class="s2">] - </span><span class="s0">df_sleep_cleaned1</span><span class="s2">[</span><span class="s3">&quot;awake&quot;</span><span class="s2">]) / </span><span class="s0">df_sleep_cleaned1</span><span class="s2">[</span><span class="s3">&quot;sleep_sum&quot;</span><span class="s2">]</span><hr class="ls0"><span class="s0">#%% 
+df_sleep_cleaned1</span><span class="s2">.</span><span class="s0">head</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% md 
+### plot and check <hr class="ls0">#%% 
+plt</span><span class="s2">.</span><span class="s0">hist</span><span class="s2">(</span><span class="s0">df_sleep_cleaned1</span><span class="s2">[</span><span class="s3">&quot;sleep_sum&quot;</span><span class="s2">] /</span><span class="s5">60</span><span class="s2">, </span><span class="s0">bins</span><span class="s2">=</span><span class="s5">30</span><span class="s2">)</span>
+<span class="s0">plt</span><span class="s2">.</span><span class="s0">title</span><span class="s2">(</span><span class="s3">&quot;Verteilung der Schlafdauer (Stunden&quot;</span><span class="s2">, </span><span class="s0">fontsize</span><span class="s2">=</span><span class="s5">14</span><span class="s2">)</span>
+<span class="s0">plt</span><span class="s2">.</span><span class="s0">xlabel</span><span class="s2">(</span><span class="s3">&quot;Dauer (Stunden)&quot;</span><span class="s2">, </span><span class="s0">fontsize</span><span class="s2">=</span><span class="s5">12</span><span class="s2">)</span>
+<span class="s0">plt</span><span class="s2">.</span><span class="s0">ylabel</span><span class="s2">(</span><span class="s3">&quot;Häufigkeit&quot;</span><span class="s2">, </span><span class="s0">fontsize</span><span class="s2">=</span><span class="s5">12</span><span class="s2">)</span>
+<span class="s0">plt</span><span class="s2">.</span><span class="s0">show</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% 
+</span><span class="s4"># Identify Outliers with box-plot</span>
+<span class="s0">plt</span><span class="s2">.</span><span class="s0">boxplot</span><span class="s2">(</span><span class="s0">df_sleep_cleaned1</span><span class="s2">[</span><span class="s3">&quot;sleep_sum&quot;</span><span class="s2">])</span>
+<span class="s0">plt</span><span class="s2">.</span><span class="s0">title</span><span class="s2">(</span><span class="s3">&quot;Sleep Duration sum (minutes)&quot;</span><span class="s2">)</span>
+<span class="s0">plt</span><span class="s2">.</span><span class="s0">ylabel</span><span class="s2">(</span><span class="s3">&quot;Minutes&quot;</span><span class="s2">)</span>
+<span class="s0">plt</span><span class="s2">.</span><span class="s0">ylim</span><span class="s2">(</span><span class="s0">bottom</span><span class="s2">=</span><span class="s5">0</span><span class="s2">)</span>
+<span class="s0">plt</span><span class="s2">.</span><span class="s0">show</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% md 
+# preprocessing_HRV_data.py <hr class="ls0">#%% md 
+### select_HRV_data() <hr class="ls0">#%% 
+</span><span class="s4"># select_hrv_data()</span>
+<span class="s0">df_hrv </span><span class="s2">= </span><span class="s0">df_raw</span><span class="s2">[</span><span class="s0">df_raw</span><span class="s2">[</span><span class="s3">&quot;type&quot;</span><span class="s2">] == </span><span class="s3">&quot;HeartRateVariabilitySDNN&quot;</span><span class="s2">]</span>
+<span class="s0">df_hrv </span><span class="s2">= </span><span class="s0">df_hrv</span><span class="s2">[[</span><span class="s3">&quot;value&quot;</span><span class="s2">, </span><span class="s3">&quot;startDate&quot;</span><span class="s2">, </span><span class="s3">&quot;endDate&quot;</span><span class="s2">]]</span>
+<span class="s0">df_hrv</span><span class="s2">.</span><span class="s0">head</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% md 
+### get_hrv_day() <hr class="ls0">#%% 
 </span><span class="s1">def </span><span class="s0">get_hrv_day</span><span class="s2">(</span><span class="s0">end</span><span class="s2">):</span>
         <span class="s1">return </span><span class="s0">end</span><span class="s2">.</span><span class="s0">date</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% 
 df_hrv</span><span class="s2">[</span><span class="s3">&quot;hrv_day&quot;</span><span class="s2">] = </span><span class="s0">df_hrv</span><span class="s2">[</span><span class="s3">&quot;endDate&quot;</span><span class="s2">].</span><span class="s0">apply</span><span class="s2">(</span><span class="s0">get_hrv_day</span><span class="s2">)</span><hr class="ls0"><span class="s0">#%% 
-df_hrv</span><hr class="ls0"><span class="s0">#%% 
+df_hrv</span><span class="s2">.</span><span class="s0">head</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% md 
+### fix_dtpes_hrv_value() <hr class="ls0">#%% 
 df_hrv</span><span class="s2">[</span><span class="s3">&quot;value&quot;</span><span class="s2">] = </span><span class="s0">pd</span><span class="s2">.</span><span class="s0">to_numeric</span><span class="s2">(</span><span class="s0">df_hrv</span><span class="s2">[</span><span class="s3">&quot;value&quot;</span><span class="s2">], </span><span class="s0">errors</span><span class="s2">=</span><span class="s3">&quot;coerce&quot;</span><span class="s2">)</span><hr class="ls0"><span class="s0">#%% 
-df_hrv</span><hr class="ls0"><span class="s0">#%% 
+df_hrv</span><span class="s2">.</span><span class="s0">head</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% md 
+### aggregate_daily_mean_hrv() <hr class="ls0">#%% 
 hrv_agg </span><span class="s2">= </span><span class="s0">df_hrv</span><span class="s2">.</span><span class="s0">groupby</span><span class="s2">([</span><span class="s3">&quot;hrv_day&quot;</span><span class="s2">])[</span><span class="s3">&quot;value&quot;</span><span class="s2">].</span><span class="s0">mean</span><span class="s2">().</span><span class="s0">reset_index</span><span class="s2">()</span>
-<span class="s0">hrv_agg</span><hr class="ls0"><span class="s0">#%% 
-hrv_agg </span><span class="s2">= </span><span class="s0">hrv_agg</span><span class="s2">.</span><span class="s0">rename</span><span class="s2">(</span><span class="s0">columns</span><span class="s2">={</span><span class="s3">&quot;value&quot;</span><span class="s2">: </span><span class="s3">&quot;mean_hrv&quot;</span><span class="s2">})</span><hr class="ls0"><span class="s0">#%% 
-plt</span><span class="s2">.</span><span class="s0">hist</span><span class="s2">(</span><span class="s0">hrv_agg</span><span class="s2">[</span><span class="s3">&quot;mean_hrv&quot;</span><span class="s2">])</span><hr class="ls0"><span class="s0">#%% md 
+<span class="s0">hrv_agg</span><span class="s2">.</span><span class="s0">head</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% 
+df_hrv </span><span class="s2">= </span><span class="s0">hrv_agg</span><span class="s2">.</span><span class="s0">rename</span><span class="s2">(</span><span class="s0">columns</span><span class="s2">={</span><span class="s3">&quot;value&quot;</span><span class="s2">: </span><span class="s3">&quot;mean_hrv&quot;</span><span class="s2">})</span><hr class="ls0"><span class="s0">#%% md 
+### plot and check <hr class="ls0">#%% 
+plt</span><span class="s2">.</span><span class="s0">hist</span><span class="s2">(</span><span class="s0">df_hrv</span><span class="s2">[</span><span class="s3">&quot;mean_hrv&quot;</span><span class="s2">], </span><span class="s0">bins</span><span class="s2">=</span><span class="s5">30</span><span class="s2">)</span>
+<span class="s0">plt</span><span class="s2">.</span><span class="s0">title</span><span class="s2">(</span><span class="s3">&quot;Verteilung der Mean HRV&quot;</span><span class="s2">, </span><span class="s0">fontsize</span><span class="s2">=</span><span class="s5">14</span><span class="s2">)</span>
+<span class="s0">plt</span><span class="s2">.</span><span class="s0">xlabel</span><span class="s2">(</span><span class="s3">&quot;Mean HRV (ms)&quot;</span><span class="s2">, </span><span class="s0">fontsize</span><span class="s2">=</span><span class="s5">12</span><span class="s2">)</span>
+<span class="s0">plt</span><span class="s2">.</span><span class="s0">ylabel</span><span class="s2">(</span><span class="s3">&quot;Häufigkeit&quot;</span><span class="s2">, </span><span class="s0">fontsize</span><span class="s2">=</span><span class="s5">12</span><span class="s2">)</span>
+<span class="s0">plt</span><span class="s2">.</span><span class="s0">show</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% 
+</span><span class="s4"># Identify Outliers with box-plot</span>
+<span class="s0">plt</span><span class="s2">.</span><span class="s0">boxplot</span><span class="s2">(</span><span class="s0">df_hrv</span><span class="s2">[</span><span class="s3">&quot;mean_hrv&quot;</span><span class="s2">])</span>
+<span class="s0">plt</span><span class="s2">.</span><span class="s0">title</span><span class="s2">(</span><span class="s3">&quot;mean HRV&quot;</span><span class="s2">)</span>
+<span class="s0">plt</span><span class="s2">.</span><span class="s0">ylabel</span><span class="s2">(</span><span class="s3">&quot;HRV&quot;</span><span class="s2">)</span>
+<span class="s0">plt</span><span class="s2">.</span><span class="s0">show</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% md 
+# df_final.py <hr class="ls0">#%% md 
 ## Merge Sleep und HRV Data <hr class="ls0">#%% 
-df_all </span><span class="s2">= </span><span class="s0">pd</span><span class="s2">.</span><span class="s0">merge</span><span class="s2">(</span><span class="s0">sleep_agg</span><span class="s2">, </span><span class="s0">hrv_agg</span><span class="s2">, </span><span class="s0">left_on</span><span class="s2">=</span><span class="s3">&quot;sleep_day&quot;</span><span class="s2">, </span><span class="s0">right_on</span><span class="s2">=</span><span class="s3">&quot;hrv_day&quot;</span><span class="s2">, </span><span class="s0">how</span><span class="s2">=</span><span class="s3">&quot;left&quot;</span><span class="s2">)</span><hr class="ls0"><span class="s0">#%% 
-df_all</span></pre>
+df_final </span><span class="s2">= </span><span class="s0">pd</span><span class="s2">.</span><span class="s0">merge</span><span class="s2">(</span><span class="s0">df_sleep_cleaned1</span><span class="s2">, </span><span class="s0">df_hrv</span><span class="s2">, </span><span class="s0">left_on</span><span class="s2">=</span><span class="s3">&quot;sleep_day&quot;</span><span class="s2">, </span><span class="s0">right_on</span><span class="s2">=</span><span class="s3">&quot;hrv_day&quot;</span><span class="s2">, </span><span class="s0">how</span><span class="s2">=</span><span class="s3">&quot;left&quot;</span><span class="s2">)</span><hr class="ls0"><span class="s0">#%% 
+df_final</span><span class="s2">.</span><span class="s0">head</span><span class="s2">()</span><hr class="ls0"><span class="s0">#%% 
+df_final</span><span class="s2">.</span><span class="s0">to_csv</span><span class="s2">(</span><span class="s3">&quot;../data/processed/data_final.csv&quot;</span><span class="s2">, </span><span class="s0">index</span><span class="s2">=</span><span class="s1">False</span><span class="s2">)</span></pre>
 </body>
 </html>
