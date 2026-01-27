@@ -60,13 +60,13 @@ st.markdown("""
   - `0` → hohe HRV (**niedriges Stressniveau**)
 
 Die Zielvariable wird über Quantile gebildet:
-- unteres 25 % → **low_hrv = 1**
-- oberes 25 % → **low_hrv = 0**
+- unteres 25 % (<= 35 ms) → **low_hrv = 1**
+- oberes 25 %（>= 43 ms）→ **low_hrv = 0**
 - mittlere 50 % werden ausgeschlossen
 
 **Prädiktoren:**
 - **sleep_sum** — Gesamte Schlafdauer (Minuten)
-- **sleep_quality** — Schlafqualitäts-Score (0–1)
+- **sleep_quality** — Schlafqualität-Score (0–100)
 - **stepCount** — Anzahl Schritte pro Tag
 - **sportTime** — Sportdauer (Minuten)
 

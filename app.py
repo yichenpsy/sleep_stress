@@ -32,7 +32,7 @@ df = load_data()
 
 col1, col2, col3, col4, col5, col6 = st.columns(6)
 col1.metric("Day", len(df))
-col2.metric("Ø HRV (below 20 -> high stress )", round(df["mean_hrv"].mean(),1))
+col2.metric("Ø HRV (low value -> high stress )", round(df["mean_hrv"].mean(),1))
 col3.metric("Ø Sleep Quality [0, 100]", round(df["sleep_quality"].mean(),1))
 col4.metric("Ø Sleep Duration (h)", round(df["sleep_sum"].mean()/60,1))
 col5.metric("Ø Step count per day", round(df["stepCount"].mean(),1))
