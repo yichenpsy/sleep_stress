@@ -14,7 +14,6 @@ jupyter_cache/
 .jupyter/
 
 # ----- Data Science Large Files -----
-*.csv
 *.tsv
 *.json
 *.xml
@@ -27,9 +26,7 @@ jupyter_cache/
 *.parquet
 
 # Ignore the entire data folder
-data/
-DP_Jupyter_Project/data/
-DP_2025/DP_Jupyter_Project/data/
+DP_2025/DP_Jupyter_Project/data/raw
 
 # ----- Apple Health Exports (very large & private!) -----
 *apple_health_export*
