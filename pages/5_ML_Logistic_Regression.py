@@ -61,7 +61,7 @@ st.markdown("""
 
 Die Zielvariable wird über Quantile gebildet:
 - unteres 25 % (<= 35 ms) → **low_hrv = 1**
-- oberes 25 %（>= 43 ms）→ **low_hrv = 0**
+- oberes 25 %（>= 43 ms）→ **high_hrv = 0**
 - mittlere 50 % werden ausgeschlossen
 
 **Prädiktoren:**
