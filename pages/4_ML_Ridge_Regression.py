@@ -12,17 +12,7 @@ from sklearn.metrics import r2_score, mean_absolute_error
 # =============================
 # App Config
 # =============================
-st.set_page_config(page_title="HRV Prediction", layout="wide")
-st.markdown(
-    """
-    <style>
-    .block-container {
-        padding: 2.5rem 4rem 2.5rem 4rem;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+st.set_page_config(page_title="HRV Prediction")
 
 
 st.title("HRV-Vorhersage mit Ridge-Regression")
@@ -32,10 +22,10 @@ st.title("HRV-Vorhersage mit Ridge-Regression")
 # Load Data
 # =============================
 @st.cache_data
-def load_data():
+def load_data(version="v2"):
     return pd.read_csv("data/processed/data_final.csv")
 
-df = load_data()
+df = load_data(version="2026-01-27")
 
 
 # =============================

@@ -18,17 +18,8 @@ from sklearn.metrics import (
 # =============================
 # App Config
 # =============================
-st.set_page_config(page_title="HRV Stress Classification", layout="wide")
-st.markdown(
-    """
-    <style>
-    .block-container {
-        padding: 2.5rem 4rem 2.5rem 4rem;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+st.set_page_config(page_title="HRV Stress Classification")
+
 
 st.title("HRV-Stressklassifikation mit logistischer Regression")
 
@@ -36,10 +27,10 @@ st.title("HRV-Stressklassifikation mit logistischer Regression")
 # Load Data
 # =============================
 @st.cache_data
-def load_data():
+def load_data(version="v2"):
     return pd.read_csv("data/processed/data_final.csv")
 
-df = load_data()
+df = load_data(version="2026-01-27")
 
 # =============================
 # Session State

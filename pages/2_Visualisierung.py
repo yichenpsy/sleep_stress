@@ -4,28 +4,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 st.title("Visualisation")
-st.markdown(
-    """
-    <style>
-    .block-container {
-        padding: 2.5rem 4rem 2.5rem 4rem;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
 @st.cache_data
-def load_data():
+def load_data(version="v2"):
     return pd.read_csv("data/processed/data_final.csv")
 
-
-df = load_data()
+df = load_data(version="2026-01-27")
 df["date"] = pd.to_datetime(df["date"])
-df["sleep_sum_hours"] = df["sleep_sum"]/60
 
 st.subheader(f"Distribution")
-
 feature = st.selectbox(
     "Variable",
     ["mean_hrv", "sleep_quality", "sleep_sum_hours", "stepCount", "sportTime"]
@@ -62,7 +49,7 @@ st.markdown("---")
 st.subheader(f"Relationship between {feature} and HRV")
 feature = st.selectbox(
     "Feature",
-    ["sleep_quality", "sleep_sum", "stepCount", "sportTime"]
+    ["sleep_quality", "sleep_sum_hours", "stepCount", "sportTime"]
 )
 
 # Prepare clean data (drop NaNs in both)
@@ -96,7 +83,7 @@ st.pyplot(fig3)
 st.markdown("---")
 st.subheader("Correlation Matrix (Numeric Features)")
 
-corr_features = ["mean_hrv", "sleep_quality", "sleep_sum", "stepCount", "sportTime"]
+corr_features = ["mean_hrv", "sleep_quality", "sleep_sum_hours", "stepCount", "sportTime"]
 corr_matrix = df[corr_features].corr()
 
 fig4, ax4 = plt.subplots()
