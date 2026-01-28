@@ -55,9 +55,8 @@ st.markdown("""
 ### Modellbeschreibung
 
 **Zielvariable (binär):**
-- **low_hrv**
-  - `1` → niedrige HRV (**hohes Stressniveau**)
-  - `0` → hohe HRV (**niedriges Stressniveau**)
+- `1` → niedrige HRV (**hohes Stressniveau**)
+- `0` → hohe HRV (**niedriges Stressniveau**)
 
 Die Zielvariable wird über Quantile gebildet:
 - unteres 25 % (<= 35 ms) → **low_hrv = 1**

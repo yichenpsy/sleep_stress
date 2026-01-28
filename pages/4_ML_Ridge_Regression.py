@@ -56,7 +56,7 @@ st.markdown("""
 
 **Prädiktoren (Features):**
 - **sleep_sum** — Gesamte Schlafdauer (in Minuten)
-- **sleep_quality** — Normalisierter Schlafqualitäts-Score (0–1)
+- **sleep_quality** — Normalisierter Schlafqualitäts-Score (0–100)
 - **stepCount** — Anzahl der täglichen Schritte
 - **sportTime** — Sportdauer pro Tag (in Minuten)
 
@@ -163,7 +163,7 @@ if ridge_model is not None:
             step=0.25
         )
     with col2:
-        sleep_quality = st.slider("Sleep quality", 0.0, 1.0, 0.7)
+        sleep_quality = st.slider("Sleep quality", 0.0, 100.0)
     with col3:
         step_count = st.number_input("Step count", min_value=0, value=8000)
     with col4:
