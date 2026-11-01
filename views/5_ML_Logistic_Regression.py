@@ -1,3 +1,4 @@
+from utils.i18n import t, column_label, display_data
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -18,10 +19,10 @@ from sklearn.metrics import (
 # =============================
 # App Config
 # =============================
-st.set_page_config(page_title="HRV Stress Classification")
+st.set_page_config(page_title=t('HRV Stress Classification'))
 
 
-st.title("HRV-Stressklassifikation mit logistischer Regression")
+st.title(t('HRV Stress Classification with Logistic Regression'))
 
 # =============================
 # Load Data
@@ -37,7 +38,7 @@ df = load_data(version="2026-01-27")
 # =============================
 for key in [
     "logreg_model", "auc", "acc",
-    "y_test", "y_pred", "y_prob",
+    "logreg_y_test", "logreg_y_pred", "y_prob",
     "q25", "q75"
 ]:
     if key not in st.session_state:
@@ -51,37 +52,36 @@ features = ["sleep_sum", "sleep_quality", "stepCount", "sportTime"]
 # =============================
 # Description
 # =============================
-st.markdown("""
-### Modellbeschreibung
+st.markdown(t("""### Model Description
 
-**Zielvariable (binär):**
-- `1` → niedrige HRV (**hohes Stressniveau**)
-- `0` → hohe HRV (**niedriges Stressniveau**)
+**Binary target:**
+- `1` → low HRV (**high stress level**)
+- `0` → high HRV (**low stress level**)
 
-Die Zielvariable wird über Quantile gebildet:
-- unteres 25 % (<= 35 ms) → **low_hrv = 1**
-- oberes 25 %（>= 43 ms）→ **high_hrv = 0**
-- mittlere 50 % werden ausgeschlossen
+The target is defined using quantiles:
+- Bottom 25% → **low_hrv = 1**
+- Top 25% → **low_hrv = 0**
+- The middle 50% are excluded
 
-**Prädiktoren:**
-- **sleep_sum** — Gesamte Schlafdauer (Minuten)
-- **sleep_quality** — Schlafqualität-Score (0–100)
-- **stepCount** — Anzahl Schritte pro Tag
-- **sportTime** — Sportdauer (Minuten)
+**Features:**
+- **sleep_sum** — Total sleep duration (minutes)
+- **sleep_quality** — Sleep quality score (0–100)
+- **stepCount** — Daily step count
+- **sportTime** — Sport duration (minutes)
 
-**Modell:**
-- Logistische Regression (binäre Klassifikation)
-- Standardisierung der Features
-- Evaluation mit Accuracy & ROC-AUC
-""")
+**Model:**
+- Logistic regression (binary classification)
+- Standardized features
+- Evaluation using accuracy and ROC-AUC
+"""))
 
 # =============================
 # Train Model Button
 # =============================
-st.subheader("Train Logistic Regression Model")
+st.subheader(t('Train Logistic Regression Model'))
 
-if st.button("Train Model"):
-    with st.spinner("Training logistic regression..."):
+if st.button(t('Train Model')):
+    with st.spinner(t('Training logistic regression...')):
 
         # --- Quantile ---
         q25 = df["mean_hrv"].quantile(0.25)
@@ -125,13 +125,13 @@ if st.button("Train Model"):
         st.session_state["logreg_model"] = logreg_model
         st.session_state["acc"] = acc
         st.session_state["auc"] = auc
-        st.session_state["y_test"] = y_test
-        st.session_state["y_pred"] = y_pred
+        st.session_state["logreg_y_test"] = y_test
+        st.session_state["logreg_y_pred"] = y_pred
         st.session_state["y_prob"] = y_prob
         st.session_state["q25"] = q25
         st.session_state["q75"] = q75
 
-        st.success("Model trained and saved successfully.")
+        st.success(t('Model trained and saved successfully.'))
 
 # =============================
 # Results
@@ -140,64 +140,72 @@ logreg_model = st.session_state["logreg_model"]
 
 if logreg_model is not None:
     st.divider()
-    st.subheader("Model Performance (Test Set)")
+    st.subheader(t('Model Performance (Test Set)'))
 
     col1, col2 = st.columns([2, 3])
 
     # ---- Metrics ----
     with col1:
-        st.metric("Accuracy", f"{st.session_state['acc']:.2f}")
+        st.metric(t('Accuracy'), f"{st.session_state['acc']:.2f}")
         st.metric("ROC-AUC", f"{st.session_state['auc']:.2f}")
         st.caption(
-            "Positive Klasse: **low HRV (hoher Stress)**"
+            t('Positive class: **low HRV (high stress)**')
         )
 
     # ---- Confusion Matrix ----
     with col2:
         cm = confusion_matrix(
-            st.session_state["y_test"],
-            st.session_state["y_pred"]
+            st.session_state["logreg_y_test"],
+            st.session_state["logreg_y_pred"]
         )
 
         fig, ax = plt.subplots(figsize=(5, 5))
         disp = ConfusionMatrixDisplay(
             confusion_matrix=cm,
-            display_labels=["High HRV", "Low HRV"]
+            display_labels=[t('High HRV'), t('Low HRV')]
         )
         disp.plot(ax=ax, cmap="Greys", colorbar=False)
-        ax.set_title("Confusion Matrix – Logistic Regression")
+        ax.set_xlabel(t("Predicted label"))
+        ax.set_ylabel(t("True label"))
+        ax.set_title(t('Confusion Matrix – Logistic Regression'))
         st.pyplot(fig)
 
     # ---- Classification Report ----
-    with st.expander("Show classification report"):
+    with st.expander(t('Show classification report')):
         report = classification_report(
-            st.session_state["y_test"],
-            st.session_state["y_pred"],
+            st.session_state["logreg_y_test"],
+            st.session_state["logreg_y_pred"],
             output_dict=True
         )
-        st.dataframe(pd.DataFrame(report).T.round(3))
+        st.dataframe(pd.DataFrame(report).T.rename(
+            index={"0": t("High HRV"), "1": t("Low HRV"),
+                   "accuracy": t("Accuracy"), "macro avg": t("Macro average"),
+                   "weighted avg": t("Weighted average")},
+            columns={"precision": t("Precision"), "recall": t("Recall"),
+                     "f1-score": t("F1 score"), "support": t("Support")},
+        ).round(3))
 
 # =============================
 # User Prediction
 # =============================
 if logreg_model is not None:
     st.divider()
-    st.subheader("Predict Stress Level (User Input)")
+    st.subheader(t('Predict Stress Level (User Input)'))
 
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
         sleep_hours = st.number_input(
-            "Sleep duration (hours)", 0.0, 24.0, 7.0, 0.25
+            t('Sleep duration (hours)'), 0.0, 24.0, 7.0, 0.25, key="logreg_sleep_hours"
         )
     with col2:
-        sleep_quality = st.slider("Sleep quality", 0.0, 100.0)
+        sleep_quality = st.slider(t('Sleep quality'), 0.0, 100.0, key="logreg_sleep_quality")
     with col3:
-        step_count = st.number_input("Step count", min_value=0, value=8000)
+        step_count = st.number_input(t('Step count'), min_value=0, value=8000, key="logreg_steps")
     with col4:
-        sport_time = st.number_input("Sport time (min)", min_value=0.0, value=30.0)
+        sport_time = st.number_input(t('Sport time (min)'), min_value=0.0, value=30.0, key="logreg_sport_time")
 
-    if st.button("Predict Stress Level"):
+    if st.button(t('Predict Stress Level')):
         user_X = pd.DataFrame([[
             sleep_hours * 60,
             sleep_quality,
@@ -210,14 +218,12 @@ if logreg_model is not None:
 
         if pred_class == 1:
             st.error(
-                f"⚠️ **High stress predicted**  \n"
-                f"Probability (low HRV): **{prob_low_hrv:.2f}**"
+                t('⚠️ **High stress predicted**  \nProbability (low HRV): **{value:.2f}**', value=prob_low_hrv)
             )
         else:
             st.success(
-                f"✅ **Low stress predicted**  \n"
-                f"Probability (low HRV): **{prob_low_hrv:.2f}**"
+                t('✅ **Low stress predicted**  \nProbability (low HRV): **{value:.2f}**', value=prob_low_hrv)
             )
 
 else:
-    st.info("Please train the model first.")
+    st.info(t('Please train the model first.'))

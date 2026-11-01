@@ -1,3 +1,4 @@
+from utils.i18n import t, column_label, display_data
 import streamlit as st
 import pandas as pd
 from pathlib import Path
@@ -11,9 +12,9 @@ def load_data():
 
 df = load_data()
 
-st.subheader("Datensatz Übersicht")
-st.write(f"{len(df)} Zeilen, {len(df.columns)} Spalten")
-st.dataframe(df.head())
+st.subheader(t('Dataset Overview'))
+st.write(t("{rows} rows, {columns} columns", rows=len(df), columns=len(df.columns)))
+st.dataframe(display_data(df.head()))
 
-st.subheader("Statistiken")
+st.subheader(t('Statistics'))
 st.write(df.describe())

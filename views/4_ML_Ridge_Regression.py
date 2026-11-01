@@ -1,3 +1,4 @@
+from utils.i18n import t, column_label, display_data
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -12,10 +13,10 @@ from sklearn.metrics import r2_score, mean_absolute_error
 # =============================
 # App Config
 # =============================
-st.set_page_config(page_title="HRV Prediction")
+st.set_page_config(page_title=t('HRV Prediction'))
 
 
-st.title("HRV-Vorhersage mit Ridge-Regression")
+st.title(t('HRV Prediction with Ridge Regression'))
 
 
 # =============================
@@ -31,7 +32,7 @@ df = load_data(version="2026-01-27")
 # =============================
 # Init Session State
 # =============================
-for key in ["ridge_model", "r2", "mae", "alpha", "y_test", "y_pred"]:
+for key in ["ridge_model", "r2", "mae", "alpha", "ridge_y_test", "ridge_y_pred"]:
     if key not in st.session_state:
         st.session_state[key] = None
 
@@ -47,28 +48,27 @@ y = df["mean_hrv"]
 # =============================
 # Train Model Button
 # =============================
-st.markdown("""
-### Modellbeschreibung
+st.markdown(t("""### Model Description
 
-**Zielvariable (Target):**
-- **mean_hrv** — Durchschnittliche Herzratenvariabilität (HRV) als Indikator für Stress und Erholung  
-  *(Höhere HRV = geringeres Stressniveau)*
+**Target:**
+- **mean_hrv** — Mean heart rate variability (HRV) as an indicator of stress and recovery
+  *(Higher HRV = lower stress level)*
 
-**Prädiktoren (Features):**
-- **sleep_sum** — Gesamte Schlafdauer (in Minuten)
-- **sleep_quality** — Normalisierter Schlafqualitäts-Score (0–100)
-- **stepCount** — Anzahl der täglichen Schritte
-- **sportTime** — Sportdauer pro Tag (in Minuten)
+**Features:**
+- **sleep_sum** — Total sleep duration (minutes)
+- **sleep_quality** — Normalized sleep quality score (0–100)
+- **stepCount** — Daily step count
+- **sportTime** — Daily sport duration (minutes)
 
-**Modell:**
-- Ridge Regression (lineares Regressionsmodell mit L2-Regularisierung)
-- Ziel: Vorhersage der HRV basierend auf Schlaf- und Aktivitätsverhalten
-""")
+**Model:**
+- Ridge regression (linear regression with L2 regularization)
+- Goal: Predict HRV from sleep and activity patterns
+"""))
 
 
-st.subheader("Train Ridge Regression Model")
-if st.button("Train Model"):
-    with st.spinner("Training model..."):
+st.subheader(t('Train Ridge Regression Model'))
+if st.button(t('Train Model')):
+    with st.spinner(t('Training model...')):
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, random_state=42
         )
@@ -93,10 +93,10 @@ if st.button("Train Model"):
         st.session_state["r2"] = r2
         st.session_state["mae"] = mae
         st.session_state["alpha"] = alpha
-        st.session_state["y_test"] = y_test
-        st.session_state["y_pred"] = y_pred
+        st.session_state["ridge_y_test"] = y_test
+        st.session_state["ridge_y_pred"] = y_pred
 
-        st.success("Model trained and saved successfully.")
+        st.success(t('Model trained and saved successfully.'))
 
 
 # =============================
@@ -106,7 +106,7 @@ ridge_model = st.session_state["ridge_model"]
 
 if ridge_model is not None:
     st.divider()
-    st.subheader("Model Performance (Test Set)")
+    st.subheader(t('Model Performance (Test Set)'))
 
     col1, col2 = st.columns([2, 3])
 
@@ -114,12 +114,12 @@ if ridge_model is not None:
     with col1:
         st.metric("R² (Test)", f"{st.session_state['r2']:.2f}")
         st.metric("MAE (Test)", f"{st.session_state['mae']:.2f}")
-        st.metric("Best α", f"{st.session_state['alpha']:.2f}")
+        st.metric(t('Best α'), f"{st.session_state['alpha']:.2f}")
 
     # ---- RIGHT: Plot ----
     with col2:
-        y_test = st.session_state["y_test"]
-        y_pred = st.session_state["y_pred"]
+        y_test = st.session_state["ridge_y_test"]
+        y_pred = st.session_state["ridge_y_pred"]
 
         fig, ax = plt.subplots(figsize=(5, 5))
         ax.scatter(y_test, y_pred, alpha=0.6)
@@ -128,15 +128,15 @@ if ridge_model is not None:
             [y_test.min(), y_test.max()],
             linestyle="--"
         )
-        ax.set_xlabel("Actual mean_hrv")
-        ax.set_ylabel("Predicted mean_hrv")
-        ax.set_title("Actual vs Predicted (Test set)")
+        ax.set_xlabel(t('Actual mean HRV'))
+        ax.set_ylabel(t('Predicted mean HRV'))
+        ax.set_title(t('Actual vs Predicted (Test Set)'))
 
         ax.text(
             0.05, 0.95,
             f"$R^2$ = {st.session_state['r2']:.2f}\n"
             f"MAE = {st.session_state['mae']:.2f}\n"
-            f"Best α = {st.session_state['alpha']:.2f}",
+            f"{t('Best α')} = {st.session_state['alpha']:.2f}",
             transform=ax.transAxes,
             verticalalignment="top",
             bbox=dict(boxstyle="round", alpha=0.8)
@@ -150,26 +150,26 @@ if ridge_model is not None:
 # =============================
 if ridge_model is not None:
     st.divider()
-    st.subheader("Predict HRV (User Input)")
+    st.subheader(t('Predict HRV (User Input)'))
 
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
         sleep_hours = st.number_input(
-            "Sleep duration (hours)",
+            t('Sleep duration (hours)'),
             min_value=0.0,
             max_value=24.0,
             value=7.0,
-            step=0.25
+            step=0.25, key="ridge_sleep_hours"
         )
     with col2:
-        sleep_quality = st.slider("Sleep quality", 0.0, 100.0)
+        sleep_quality = st.slider(t('Sleep quality'), 0.0, 100.0, key="ridge_sleep_quality")
     with col3:
-        step_count = st.number_input("Step count", min_value=0, value=8000)
+        step_count = st.number_input(t('Step count'), min_value=0, value=8000, key="ridge_steps")
     with col4:
-        sport_time = st.number_input("Sport time (min)", min_value=0.0, value=30.0)
+        sport_time = st.number_input(t('Sport time (min)'), min_value=0.0, value=30.0, key="ridge_sport_time")
 
-    if st.button("Predict HRV"):
+    if st.button(t('Predict HRV')):
         sleep_sum_minutes = sleep_hours * 60  # hours → minutes
 
         user_X = pd.DataFrame([[
@@ -180,7 +180,7 @@ if ridge_model is not None:
         ]], columns=features)
 
         prediction = ridge_model.predict(user_X)[0]
-        st.success(f"Predicted mean HRV: **{prediction:.2f}**")
+        st.success(t("Predicted mean HRV: **{value:.2f}**", value=prediction))
 
 else:
-    st.info("Please train the model first to enable prediction.")
+    st.info(t('Please train the model first to enable prediction.'))

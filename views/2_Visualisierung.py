@@ -1,9 +1,10 @@
+from utils.i18n import t, column_label, display_data
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-st.title("Visualisation")
+st.title(t('Visualization'))
 
 @st.cache_data
 def load_data(version="v2"):
@@ -12,10 +13,11 @@ def load_data(version="v2"):
 df = load_data(version="2026-01-27")
 df["date"] = pd.to_datetime(df["date"])
 
-st.subheader(f"Distribution")
+st.subheader(t("Distribution"))
 feature = st.selectbox(
-    "Variable",
-    ["mean_hrv", "sleep_quality", "sleep_sum_hours", "stepCount", "sportTime"]
+    t('Variable'),
+    ["mean_hrv", "sleep_quality", "sleep_sum_hours", "stepCount", "sportTime"],
+    format_func={name: column_label(name) for name in df.columns}.__getitem__, key="2_Visualisierung_variable"
 )
 
 # =========================
@@ -27,17 +29,17 @@ col1, col2 = st.columns([1, 1])
 with col1:
     fig1, ax1 = plt.subplots()
     ax1.hist(df[feature].dropna(), bins=20)
-    ax1.set_title(f"Histogram of {feature}")
-    ax1.set_xlabel(feature)
-    ax1.set_ylabel("Count")
+    ax1.set_title(t('Histogram of {feature}', feature=column_label(feature)))
+    ax1.set_xlabel(column_label(feature))
+    ax1.set_ylabel(t('Count'))
     st.pyplot(fig1)
 
 # --- Boxplot ---
 with col2:
     fig2, ax2 = plt.subplots()
     ax2.boxplot(df[feature].dropna())
-    ax2.set_title(f"Boxplot of {feature}")
-    ax2.set_ylabel(feature)
+    ax2.set_title(t('Boxplot of {feature}', feature=column_label(feature)))
+    ax2.set_ylabel(column_label(feature))
     st.pyplot(fig2)
 
 
@@ -46,11 +48,13 @@ with col2:
 # =========================
 st.markdown("---")
 
-st.subheader(f"Relationship between {feature} and HRV")
 feature = st.selectbox(
-    "Feature",
-    ["sleep_quality", "sleep_sum_hours", "stepCount", "sportTime"]
+    t('Feature'),
+    ["sleep_quality", "sleep_sum_hours", "stepCount", "sportTime"],
+    format_func={name: column_label(name) for name in df.columns}.__getitem__, key="scatter_feature"
 )
+
+st.subheader(t("Relationship between {feature} and HRV", feature=column_label(feature)))
 
 # Prepare clean data (drop NaNs in both)
 df_scatter = df[[feature, "mean_hrv"]].dropna()
@@ -70,9 +74,9 @@ if len(x) > 1:
     y_line = m * x_line + b
     ax3.plot(x_line, y_line)
 
-ax3.set_title(f"{feature} vs HRV")
-ax3.set_xlabel(feature)
-ax3.set_ylabel("mean_hrv")
+ax3.set_title(t('{feature} vs HRV', feature=column_label(feature)))
+ax3.set_xlabel(column_label(feature))
+ax3.set_ylabel(column_label("mean_hrv"))
 
 st.pyplot(fig3)
 
@@ -81,7 +85,7 @@ st.pyplot(fig3)
 # Row 3: Correlation Matrix
 # =========================
 st.markdown("---")
-st.subheader("Correlation Matrix (Numeric Features)")
+st.subheader(t('Correlation Matrix (Numeric Features)'))
 
 corr_features = ["mean_hrv", "sleep_quality", "sleep_sum_hours", "stepCount", "sportTime"]
 corr_matrix = df[corr_features].corr()
@@ -92,8 +96,8 @@ im = ax4.imshow(corr_matrix, cmap="coolwarm",vmin=-1,vmax=1,aspect="auto")
 # Ticks & labels
 ax4.set_xticks(range(len(corr_features)))
 ax4.set_yticks(range(len(corr_features)))
-ax4.set_xticklabels(corr_features, rotation=45, ha="right")
-ax4.set_yticklabels(corr_features)
+ax4.set_xticklabels([column_label(c) for c in corr_features], rotation=45, ha="right")
+ax4.set_yticklabels([column_label(c) for c in corr_features])
 
 # Add correlation values as text
 for i in range(len(corr_features)):
@@ -101,7 +105,7 @@ for i in range(len(corr_features)):
         ax4.text(j, i, f"{corr_matrix.iloc[i, j]:.2f}",
                  ha="center", va="center", fontsize=9)
 
-ax4.set_title("Pearson Correlation Matrix")
+ax4.set_title(t('Pearson Correlation Matrix'))
 
 fig4.colorbar(im, ax=ax4, fraction=0.046, pad=0.04)
 

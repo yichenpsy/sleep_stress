@@ -1,41 +1,19 @@
 import streamlit as st
-import pandas as pd
-from pathlib import Path
-
-
-st.markdown(
-    """
-    <style>
-    .block-container {
-        padding: 2.5rem 4rem 2.5rem 4rem;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+from utils.i18n import t, DEFAULT_LANGUAGE
 
 st.set_page_config(page_title="Sleep & HRV", layout="wide")
-st.title("Sleep, Sport & Stress Dashboard")
-
-st.markdown("""
-Diese App analysiert meinen Schlaf, HRV und Aktivität
-und zeigt Zusammenhänge und Vorhersagen.
-""")
-
-@st.cache_data
-def load_data():
-    BASE_DIR = Path(__file__).resolve().parent
-    data_path = BASE_DIR / "data" / "processed" / "data_final.csv"
-    return pd.read_csv(data_path)
-
-df = load_data()
-
-col1, col2, col3, col4, col5, col6 = st.columns(6)
-col1.metric("Day", len(df))
-col2.metric("Ø HRV (low value -> high stress )", round(df["mean_hrv"].mean(),1))
-col3.metric("Ø Sleep Quality [0, 100]", round(df["sleep_quality"].mean(),1))
-col4.metric("Ø Sleep Duration (h)", round(df["sleep_sum"].mean()/60,1))
-col5.metric("Ø Step count per day", round(df["stepCount"].mean(),1))
-col6.metric("Ø Sport time per day (min)", round(df["sportTime"].mean(),1))
-
-st.dataframe(df)
+# Widget runs outside individual pages to keep the choice when navigating.
+st.sidebar.selectbox(
+    "Language / Sprache", ["en", "de"],
+    format_func=lambda code: {"en": "English", "de": "Deutsch"}[code],
+    key="language", index=["en", "de"].index(DEFAULT_LANGUAGE),
+)
+st.set_page_config(page_title=t("Sleep & HRV"))
+page = st.navigation([
+    st.Page("utils/dashboard.py", title=t("Overview"), default=True, url_path="dashboard"),
+    st.Page("views/1_Daten_Exploration.py", title=t("Data Exploration"), url_path="Daten_Exploration"),
+    st.Page("views/2_Visualisierung.py", title=t("Visualization"), url_path="Visualisierung"),
+    st.Page("views/4_ML_Ridge_Regression.py", title=t("Ridge Regression"), url_path="ML_Ridge_Regression"),
+    st.Page("views/5_ML_Logistic_Regression.py", title=t("Logistic Regression"), url_path="ML_Logistic_Regression"),
+])
+page.run()

@@ -1,8 +1,9 @@
+from utils.i18n import t, column_label, display_data
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-st.title("Data exploration")
+st.title(t('Data Exploration'))
 
 @st.cache_data
 def load_data(version="v2"):
@@ -14,13 +15,13 @@ df = load_data(version="2026-01-27")
 df["date"] = pd.to_datetime(df["date"])
 
 start_date, end_date = st.slider(
-    "Date",
+    t('Date'),
     min_value=df["date"].min().to_pydatetime(),
     max_value=df["date"].max().to_pydatetime(),
     value=(
         df["date"].min().to_pydatetime(),
         df["date"].max().to_pydatetime()
-    )
+    ), key="exploration_dates"
 )
 
 df = df[
@@ -28,12 +29,13 @@ df = df[
     (df["date"] <= end_date)
 ]
 
-st.metric("Filtered Days", len(df))
-st.dataframe(df)
+st.metric(t('Filtered Days'), len(df))
+st.dataframe(display_data(df))
 
 feature = st.selectbox(
-    "variable",
-    ["mean_hrv", "sleep_quality", "sleep_sum_hours", "stepCount", "sportTime"]
+    t('Variable'),
+    ["mean_hrv", "sleep_quality", "sleep_sum_hours", "stepCount", "sportTime"],
+    format_func={name: column_label(name) for name in df.columns}.__getitem__, key="1_Daten_Exploration_variable"
 )
 
 # ---------------- Filtering logic ----------------
@@ -44,9 +46,9 @@ df_plot = df
 fig, ax = plt.subplots(figsize=(15, 6))
 
 ax.bar(df_plot["date"], df_plot[feature])
-ax.set_xlabel("Date")
-ax.set_ylabel(feature)
-ax.set_title(f"{feature} over time")
+ax.set_xlabel(t('Date'))
+ax.set_ylabel(column_label(feature))
+ax.set_title(t('{feature} over time', feature=column_label(feature)))
 
 plt.xticks(rotation=45)
 st.pyplot(fig)
