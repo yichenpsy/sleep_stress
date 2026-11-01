@@ -17,7 +17,11 @@ st.markdown(
 
 st.title(t('Sleep, Sport & Stress Dashboard'))
 
-st.markdown(t('This app analyzes my sleep, HRV, and activity from 2022 to 2025 and shows relationships and predictions.'))
+st.markdown(
+    t('This app analyzes my sleep, HRV, and activity from 2022 to 2025 and shows relationships and predictions.')
+    + "  \n"
+    + t('Data source: Apple Watch')
+)
 
 @st.cache_data
 def load_data():

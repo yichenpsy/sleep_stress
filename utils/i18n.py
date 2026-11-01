@@ -13,6 +13,8 @@ GERMAN = {
     "Logistic Regression": "Logistische Regression",
     "Sleep, Sport & Stress Dashboard": "Dashboard für Schlaf, Sport & Stress",
     "This app analyzes my sleep, HRV, and activity and shows relationships and predictions.": "Diese App analysiert meinen Schlaf, meine HRV und meine Aktivität und zeigt Zusammenhänge und Vorhersagen.",
+    "This app analyzes my sleep, HRV, and activity from 2022 to 2025 and shows relationships and predictions.": "Diese App analysiert meinen Schlaf, meine HRV und meine Aktivität von 2022 bis 2025 und zeigt Zusammenhänge und Vorhersagen.",
+    "Data source: Apple Watch": "Datenquelle: Apple Watch",
     "Days": "Tage",
     "Average HRV (lower values indicate higher stress)": "Mittlere HRV (niedrigere Werte deuten auf höheren Stress hin)",
     "Average Sleep Quality [0, 100]": "Mittlere Schlafqualität [0, 100]",
